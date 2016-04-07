@@ -1,0 +1,425 @@
+@import "https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic&subset=latin,cyrillic";
+
+body, html {
+    overflow-x: hidden;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+section {
+    margin-top: 85px;
+    margin-bottom: 75px;
+}
+
+section #timer {
+    padding-top: -150px;
+}
+
+.navbar-inverse {
+	background-color: black;
+}
+
+#canvas {
+    margin-top: 150px;
+}
+
+/* colorpicker styles */
+
+canvas {
+
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+#center {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+}
+.center {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+}
+
+#videoDiv {
+    margin-top: 50px;
+}
+
+#videoBtn {
+    margin-top: 15px;
+    margin-right: 15px;
+
+    -webkit-transition: all 0.3s ease; /* Safari and Chrome */
+    -moz-transition: all 0.3s ease; /* Firefox */
+    -ms-transition: all 0.3s ease; /* IE 9 */
+    -o-transition: all 0.3s ease; /* Opera */
+    transition: all 0.4s ease;
+}
+
+#videoBtn:hover {
+    margin-right: 30px;
+    margin-left: 30px;
+    font-size: 25px;
+    color: black;
+    -webkit-transform:scale(1.25); /* Safari and Chrome */
+    -moz-transform:scale(1.25); /* Firefox */
+    -ms-transform:scale(1.25); /* IE 9 */
+    -o-transform:scale(1.25); /* Opera */
+    transform:scale(1.25);
+}
+
+
+.colorpicker {
+
+    background-color: #fff;
+    font-size: 17px;
+    padding: 20px 20px 20px 20px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+
+}
+
+#picker {
+
+	text-align: center;
+    cursor: crosshair;
+    margin: 10px;
+    border: 0;
+    margin-right: auto;
+    margin-left: auto;
+
+}
+
+#table-temp {
+    font-weight: bold;
+    color: #2C3E50;
+    font-size: 30px;
+
+}
+
+#hexVal {
+    font-size: 25px;
+}
+
+
+
+#knob {
+    top: 14%;
+    position: absolute;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+
+}
+
+#wheel {
+    width: 575px;
+    position:relative;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+
+
+footer {
+    position: fixed;
+    height: 50px;
+    width: 100%;
+    bottom: 0;left: 0;
+
+
+}
+footer nav div {
+    margin: 0 auto;
+    text-align: center;
+    max-width: 500px;
+    
+}
+
+
+
+#tempheader {
+    text-align: center;
+}
+
+#tempdate {
+    text-align: center;
+    float: left;
+}
+#tempdata {
+    text-align: center;
+}
+
+
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.bs-component {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.jumbotron p {
+    font-size: 18px;
+}
+
+
+.header-page h4 {
+    line-height: 31px;
+    text-align: center;
+}
+
+
+.nav-top > div {
+    text-align: center;
+    display: inline-block;
+    color: #000;
+    width: 33%;
+    margin: 0 auto;
+}
+
+.nav-top {
+    text-align: center;
+    margin: 0 auto;
+    height: 39px;
+    background-color: #e53935;
+    
+}
+
+.header-grid {
+    font-weight: bold;
+    top: 150px;
+}
+
+
+footer .navbar {
+    padding-bottom: 70px;
+
+}
+
+footer .navbar .btn-floating {
+    margin-bottom: -10px;
+}
+
+footer .navbar button {
+    margin-top: 10px;
+    height: 60px;
+}
+
+
+#asd {
+    margin-right: 12px;
+}
+
+.table {
+    table-layout: fixed;
+}
+
+
+@media screen and (min-width: 750px) {
+  
+    .header-page h4 {
+        font-size: 35px;
+    }
+    footer {
+        bottom: initial;
+        top: 50px;
+    }
+
+}
+@media screen and (max-width: 750px) {
+     
+    footer {
+        margin-bottom: 25px;
+        padding-top: 10px;
+        padding-bottom: 45px;
+        bottom: 0;
+
+    }
+    #table-temp {
+        font-size: 20px;
+    }
+    #color-pic {
+        width: 30px;
+        height: 20px;
+    }
+    #hexVal {
+        font-size: 15px;
+    }
+   
+}
+
+@media screen and (max-height: 750px) {
+     
+    #tempdate h1 {
+        font-size: 35px;
+
+    }
+    section {
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+   
+}
+
+@media screen and (max-width: 780px) {
+     
+    #knob {
+        width: 360px;
+        height: 360px;
+    }
+   
+}
+
+@media screen and (max-width: 720px) {
+     
+    #knob {
+        top: 16%;
+        width: 320px;
+        height: 320px;
+    }
+   
+}
+@media screen and (max-width: 665px) {
+     
+    #knob {
+        width: 300px;
+        height: 300px;
+    }
+   
+}
+
+@media screen and (max-width: 640px) {
+     
+    #knob {
+        width: 290px;
+        height: 290px;
+    }
+   
+}
+
+@media screen and (max-width: 600px) {
+     
+    #knob {
+        width: 270px;
+        height: 270px;
+    }
+   
+}
+@media screen and (max-width: 565px) {
+     
+    #knob {
+        width: 250px;
+        height: 250px;
+    }
+   
+}
+
+@media screen and (max-width: 535px) {
+     
+    #knob {
+        width: 230px;
+        height: 230px;
+    }
+   
+}
+
+@media screen and (max-width: 500px) {
+     
+    #knob {
+        width: 210px;
+        height: 210px;
+    }
+   
+}
+
+@media screen and (max-width: 475px) {
+     
+    #knob {
+        width: 195px;
+        height: 195px;
+    }
+   
+}
+
+@media screen and (max-width: 445px) {
+     
+    #knob {
+        width: 175px;
+        height: 175px;
+    }
+   
+}
+
+@media screen and (max-width: 415px) {
+     
+    #knob {
+        width: 155px;
+        height: 155px;
+    }
+   
+}
+
+@media screen and (max-width: 390px) {
+     
+    #knob {
+        width: 145px;
+        height: 145px;
+    }
+   
+}
+
+@media screen and (max-width: 370px) {
+     
+    #knob {
+        width: 135px;
+        height: 135px;
+    }
+   
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

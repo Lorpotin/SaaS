@@ -1,0 +1,32 @@
+{
+  "name": "SaaS",
+  "description": "SaaS course stuffz",
+  "version": "0.0.1",
+  "license": {
+    "type": "MIT-CMU",
+    "url": "https://spdx.org/licenses/MIT-CMU.html#licenseText"
+  },
+  "author": "Otto Laitinen <>",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "bootstrap": "^3.3.6",
+    "dateformat": "^1.0.12",
+    "express": "^4.13.3",
+    "fs": "0.0.2",
+    "jquery": "^2.1.3",
+    "randomstring": "^1.1.3",
+    "react": "^0.12.2",
+    "react-bootstrap": "^0.13.3",
+    "react-router": "^0.11.6",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "babel-core": "^5.0.0",
+    "babel-loader": "^5.2.2",
+    "cordova-common": "^1.0.0",
+    "css-loader": "^0.9.1",
+    "jsx-loader": "^0.12.2",
+    "style-loader": "^0.8.3",
+    "webpack": "^1.5.3"
+  }
+}
