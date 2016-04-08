@@ -1,41 +1,55 @@
 var express = require('express'),
     app     = express(),
-    time    = require('time'),
     request = require('request'),
     fs      = require('fs'),
     jsdom   = require('jsdom'),
     PORT    = process.env.PORT || 8000;
 
-var db = 'db.json';
+const db_path = 'db.json';
+const buss_stop = 205390;
+var db = {
+    'buss':{}
+};
 
 var dbinit = function (callback) {
     // create file if it does not already exist
-    fs.open(db, 'a', function(err, fd) {
+    fs.open(db_path, 'a', function(err, fd) {
         if(err) console.log(err);
         else {
-            console.log('database file ('+db+') opened successfully');
-            if(callback) callback();
+            console.log('database file ('+db_path+') opened successfully');
+            readdb(function(data){
+                db = data;
+                if(callback) callback();
+            });
         }
     })
 }
 
 var readdb = function (callback) {
-    var options = {
-        encoding : 'utf-8'
-    }
-    fs.readFile(db, options, function(err, data) {
+    fs.readFile(db_path, 'utf-8', function(err, data) {
         if (err) console.log(err);
         else {
-            if(callback) callback(JSON.parse(data));
+            try {
+                data = JSON.parse(data);
+                if(callback) callback(data);
+            } catch (err) {
+                console.log("failed to parse db.json, initializing with empty (might be first time opened)");
+                writedb(db);
+            }
         }
     });
 }
 
 var writedb = function(data, callback) {
-    var options = {
-        encoding : 'utf-8'
+    try {
+        // pretty printing enabled
+        data['time'] = new Date().toString();
+        var json = JSON.stringify(data, null, 4);
+    } catch(err) {
+        console.log("(writedb) failed JSON.toString");
+        return;
     }
-    fs.writeFile(db, data, options, function(err) {
+    fs.writeFile(db_path, json, 'utf-8', function(err) {
         if (err) console.log(err);
         else {
             if(callback) callback();
@@ -43,8 +57,7 @@ var writedb = function(data, callback) {
     });
 }
 
-var getBusses = function (id, callback) {
-    var now = new time.Date();
+var fetchBusses = function (id, callback) {
     // nykäistään tähän jotain paskaa mikä tarkastaa ettei tartte joka vitun sekuntti ettiä sitä bussiaikataulua
     return request(
         'http://bussit.lappeenranta.fi/bussit/web?command=rsearch&action=sd&id='+id,
@@ -55,7 +68,7 @@ var getBusses = function (id, callback) {
                 function(err, window) {
                     var $ = window.$;
                     var departures = {};
-                    departures['time'] = now.toString();
+                    departures['time'] = new Date().toString();
                     $('#stop-departures').find('.departure').each(function(index, element) {
                         var time = $(this).find('.time').text();
                         var line = $(this).find('.line').text();
@@ -84,9 +97,14 @@ var server = app.listen(PORT, process.env.IP, function() {
 // start database updating here
 var update = function() {
     // put separate intervals for updating different database parts
-    //readdb(console.log);
-    //getBusses(205390, console.log);
+    // readdb(console.log);
+    // update bussess
+    fetchBusses(buss_stop, function(data) {
+        db['buss'][buss_stop] = data;
+        writedb(db);
+    });
     console.log("running updates");
+
 };
 /*
     busses from university
