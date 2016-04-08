@@ -34,7 +34,7 @@ var readdb = function (callback) {
                 if(callback) callback(data);
             } catch (err) {
                 console.log("failed to parse db.json, initializing with empty (might be first time opened)");
-                writedb(db);
+                writedb(db, callback);
             }
         }
     });
@@ -56,9 +56,31 @@ var writedb = function(data, callback) {
         }
     });
 }
-
+/*
+    returns time difference between now and then (in mm.)
+*/
+var timeDifference = function (then) {
+    var difference = undefined;
+    if(then != undefined) {
+        try {
+            difference = ((new Date()).getTime() - (new Date(then)).getTime());
+        } catch (err) {
+            console.log(err);
+            console.log("something weird happened when tried to use new Date on your stupid time parameter, fix it!");
+        }
+    } else {
+        console.log("you stupid cunt, you gave timeDifference function undefined parameter!");
+    }
+    return difference;
+}
 var fetchBusses = function (id, callback) {
-    // nykäistään tähän jotain paskaa mikä tarkastaa ettei tartte joka vitun sekuntti ettiä sitä bussiaikataulua
+    // in entirely empty db there is no buss stops
+    if(db['buss'][id] == undefined) db['buss'][id] = {};
+    // get difference in time between now and last update
+    var difference = timeDifference(db['buss'][id]['time']);
+    // dont mind fetching new timetables, not yet 5 minutes have passed
+    if(difference != undefined && difference < (1000*60*5)) return;
+
     return request(
         'http://bussit.lappeenranta.fi/bussit/web?command=rsearch&action=sd&id='+id,
         function(error, res, body) {
@@ -66,21 +88,25 @@ var fetchBusses = function (id, callback) {
                 body,
                 ["http://code.jquery.com/jquery.js"], // tän nyt melkein vois ladata servulle
                 function(err, window) {
-                    var $ = window.$;
-                    var departures = {};
-                    departures['time'] = new Date().toString();
-                    $('#stop-departures').find('.departure').each(function(index, element) {
-                        var time = $(this).find('.time').text();
-                        var line = $(this).find('.line').text();
-                        var dest = $(this).find('.destination').text();
-                        var dep = {
-                            'time' : time,
-                            'line' : line,
-                            'destination' : dest
-                        }
-                        departures[index] = dep;
-                    })
-                    if(callback) callback(departures);
+                    if(err) console.log(err);
+                    else {
+                        var $ = window.$;
+                        var departures = {};
+                        departures['time'] = new Date().toString();
+                        $('#stop-departures').find('.departure').each(function(index, element) {
+                            var time = $(this).find('.time').text();
+                            var line = $(this).find('.line').text();
+                            var dest = $(this).find('.destination').text();
+                            var dep = {
+                                'time' : time,
+                                'line' : line,
+                                'destination' : dest
+                            }
+                            departures[index] = dep;
+                        })
+                        console.log("updated buss information for buss stop "+buss_stop);
+                        if(callback) callback(departures);
+                    }
                 }
             );
         }
@@ -96,15 +122,15 @@ var server = app.listen(PORT, process.env.IP, function() {
 
 // start database updating here
 var update = function() {
-    // put separate intervals for updating different database parts
-    // readdb(console.log);
-    // update bussess
-    fetchBusses(buss_stop, function(data) {
-        db['buss'][buss_stop] = data;
-        writedb(db);
-    });
-    console.log("running updates");
-
+    console.log("doing update loop");
+    // try updating busses every 1 minute or so (fetchBusses wont actually ping server if we have less than 5 minutes old information)
+    setInterval(function() {
+            fetchBusses(buss_stop, function(data) {
+                db['buss'][buss_stop] = data;
+                writedb(db);
+            });
+        }, 1000*60
+    )
 };
 /*
     busses from university
