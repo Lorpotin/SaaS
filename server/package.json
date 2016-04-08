@@ -1,0 +1,20 @@
+{
+    "name": "saas_server",
+    "version": "0.0.1",
+    "description": "course service oriented architecuter server at LUT",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "github.com/Loprotin/SaaS"
+    },
+    "author": [
+        "Lerppana <lassi.laati@student.lut.fi>",
+        "Lorpo <otto.m.laitinen@student.lut.fi>",
+        "Lötrö <lassi.riihela@student.lut.fi>",
+        "Nadorr <tatu.virta@student.lut.fi>"
+    ],
+    "license": "ISC"
+}
