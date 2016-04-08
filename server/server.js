@@ -8,6 +8,17 @@ var express = require('express'),
 
 var db = 'db.json';
 
+var dbinit = function (callback) {
+    // create file if it does not already exist
+    fs.open(db, 'a', function(err, fd) {
+        if(err) console.log(err);
+        else {
+            console.log('database file ('+db+') opened successfully');
+            if(callback) callback();
+        }
+    })
+}
+
 var readdb = function (callback) {
     var options = {
         encoding : 'utf-8'
@@ -16,6 +27,18 @@ var readdb = function (callback) {
         if (err) console.log(err);
         else {
             if(callback) callback(JSON.parse(data));
+        }
+    });
+}
+
+var writedb = function(data, callback) {
+    var options = {
+        encoding : 'utf-8'
+    }
+    fs.writeFile(db, data, options, function(err) {
+        if (err) console.log(err);
+        else {
+            if(callback) callback();
         }
     });
 }
@@ -55,11 +78,16 @@ var server = app.listen(PORT, process.env.IP, function() {
     var host = server.address().address;
     var port = server.address().port;
     console.log("Express server now running at https://%s:%s", host, port);
-
-    //readdb(console.log);
-    //getBusses(205390, console.log);
+    dbinit(update);
 });
 
+// start database updating here
+var update = function() {
+    // put separate intervals for updating different database parts
+    //readdb(console.log);
+    //getBusses(205390, console.log);
+    console.log("running updates");
+};
 /*
     busses from university
     http://bussit.lappeenranta.fi/bussit/web?command=rsearch&action=sd&id=205390
