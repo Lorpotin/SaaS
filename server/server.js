@@ -43,7 +43,7 @@ var readdb = function (callback) {
 var writedb = function(data, callback) {
     try {
         // pretty printing enabled
-        data['time'] = new Date().toString();
+        //data['time'] = new Date().toString();
         var json = JSON.stringify(data, null, 4);
     } catch(err) {
         console.log("(writedb) failed JSON.toString");
@@ -77,11 +77,15 @@ var fetchBusses = function (id, callback) {
     // in entirely empty db there is no buss stops
     if(db['buss'][id] == undefined) db['buss'][id] = {};
     // get difference in time between now and last update
-    var difference = timeDifference(db['buss'][id]['time']);
+    if(db['buss'][id]['time'] != undefined)
+        var difference = timeDifference(db['buss'][id]['time']);
     // dont mind fetching new timetables, not yet 5 minutes have passed
-    if(difference != undefined && difference < (1000*60*5)) return;
-
-    return request(
+    if(difference != undefined && difference < (1000*60*5)) {
+        if(callback) callback(db['buss'][id]);
+        return;
+    }
+    console.log("updating buss shit");
+    request(
         'http://bussit.lappeenranta.fi/bussit/web?command=rsearch&action=sd&id='+id,
         function(error, res, body) {
             jsdom.env(
@@ -104,7 +108,11 @@ var fetchBusses = function (id, callback) {
                             }
                             departures[index] = dep;
                         })
-                        console.log("updated buss information for buss stop "+buss_stop);
+                        console.log("updated buss information for buss stop "+id);
+                        // update db file
+                        db['buss'][id] = departures;
+                        writedb(db);
+
                         if(callback) callback(departures);
                     }
                 }
@@ -112,6 +120,52 @@ var fetchBusses = function (id, callback) {
         }
     );
 }
+
+var fetchWeather = function(callback) {
+    if(db['weather'] == undefined) db['weather'] = {};
+    // get difference in time between now and last update
+    if(db['weather']['time'] != undefined)
+        var difference = timeDifference(db['weather']['time']);
+    
+    if(difference != undefined && difference < (1000*60*5)) {
+        if(callback) callback(db['weather']);
+        return;
+    }
+    console.log("updating weather shit");
+    request(
+        "http://skinfo.dy.fi/api/weather.json",
+        function(error, res, body) {
+            if(error) console.log(error);
+            else {
+                var weather = JSON.parse(body);
+                weather['time'] = new Date().toString();         
+                console.log("updated weather information");
+                // update db file
+                db['weather'] = weather;
+                writedb(db);
+                if(callback) callback(departures);
+            }
+        }
+    );
+}
+
+app.get('/buses/:id', function(req, res) {
+    var stop_id = req.params.id;
+    if(stop_id == undefined) stop_id = buss_stop;
+    fetchBusses(stop_id, function(data) {
+        res.send(JSON.stringify(db['buss'][stop_id]));
+        res.end();
+    });  
+});
+
+
+app.get('/weather', function(req, res) {
+    fetchWeather(function(data) {
+        res.send(JSON.stringify(db['weather']['current']));
+        res.end();
+    });  
+});
+
 
 var server = app.listen(PORT, process.env.IP, function() {
     var host = server.address().address;
@@ -124,13 +178,12 @@ var server = app.listen(PORT, process.env.IP, function() {
 var update = function() {
     console.log("doing update loop");
     // try updating busses every 1 minute or so (fetchBusses wont actually ping server if we have less than 5 minutes old information)
-    setInterval(function() {
-            fetchBusses(buss_stop, function(data) {
-                db['buss'][buss_stop] = data;
-                writedb(db);
-            });
-        }, 1000*60
-    )
+    
+    fetchBusses(buss_stop, function(data) {
+
+    });
+
+    fetchWeather();
 };
 /*
     busses from university
@@ -139,4 +192,6 @@ var update = function() {
     http://www.finnkino.fi/xml/Schedule/?area=1041&dt=08.04.2016
     lappeenranta happenings
     http://api.uusitapahtumakalenteri.ekarjala.fi/json/lappeenranta
+    lämpötila
+    http://skinfo.dy.fi/api/weather.json
 */
